@@ -12,11 +12,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * @author ：图灵-杨过
- * @date：2019/7/22
- * @version: V1.0
- * @slogan: 天下风云出我辈，一入代码岁月催
- * @description :
+ * @author liurq
+ * @desc 自定义线程池
+ * @date 2022-03-05  19:40
  */
 public class LiurqThreadPoolExecutor implements LiurqExecutorService {
     /**
