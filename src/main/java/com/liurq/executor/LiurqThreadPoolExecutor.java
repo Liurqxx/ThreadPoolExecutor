@@ -27,7 +27,7 @@ public class LiurqThreadPoolExecutor implements LiurqExecutorService {
      */
     private static final int defaultPoolSize = 5;
 
-    private static final long defaultAliveTime = 60l;
+    private static final long defaultAliveTime = 60L;
 
     /**
      * 线程池最大的大小
@@ -89,13 +89,15 @@ public class LiurqThreadPoolExecutor implements LiurqExecutorService {
     }
 
     public LiurqThreadPoolExecutor(int poolsize, int queueSize, long keepAliveTime, PolicyHandler handler) {
-        if (poolsize <= 0 || poolsize > maxPoolSize)
+        if (poolsize <= 0 || poolsize > maxPoolSize) {
             throw new IllegalArgumentException("线程池大小不能<=0");
+        }
         this.poolsize = poolsize;
         this.handler = handler;
         this.keepAliveTime = keepAliveTime;
-        if (keepAliveTime > 0)
+        if (keepAliveTime > 0) {
             allowThreadTimeOut = true;
+        }
         this.workQueue = new ArrayBlockingQueue<Runnable>(queueSize);
     }
 
@@ -104,17 +106,21 @@ public class LiurqThreadPoolExecutor implements LiurqExecutorService {
      *
      * @param task
      */
+    @Override
     public void execute(Runnable task) {
-        if (task == null)
+        if (task == null) {
             throw new NullPointerException("任务不能为空");
-        if (isShutDown)
+        }
+        if (isShutDown) {
             throw new IllegalStateException("线程池已销毁,禁止提交任务...");
+        }
 
         int c = ctl.get();
         //任务数小于
         if (c < poolsize) {
-            if (addWorker(task, true))
+            if (addWorker(task, true)) {
                 return;
+            }
         } else if (workQueue.offer(task)) {
 
         } else {
@@ -122,6 +128,7 @@ public class LiurqThreadPoolExecutor implements LiurqExecutorService {
         }
     }
 
+    @Override
     public void shutdown() {
         final ReentrantLock mainLock = this.mainLock;
         mainLock.lock();
@@ -145,6 +152,7 @@ public class LiurqThreadPoolExecutor implements LiurqExecutorService {
 
     }
 
+    @Override
     public int getCorePoolSize() {
         return ctl.get();
     }
@@ -154,6 +162,7 @@ public class LiurqThreadPoolExecutor implements LiurqExecutorService {
      *
      * @return
      */
+    @Override
     public Runnable getTask() {
         try {
             return allowThreadTimeOut ? workQueue.poll(keepAliveTime, TimeUnit.SECONDS) : workQueue.take();
@@ -189,8 +198,9 @@ public class LiurqThreadPoolExecutor implements LiurqExecutorService {
     }
 
     private void processWorkerExit(Worker worker, boolean completedAbruptly) {
-        if (completedAbruptly)
+        if (completedAbruptly) {
             ctl.decrementAndGet();
+        }
 
         final ReentrantLock mainLock = this.mainLock;
         mainLock.lock();
