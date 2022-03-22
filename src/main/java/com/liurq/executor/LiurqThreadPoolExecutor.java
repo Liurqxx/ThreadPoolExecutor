@@ -116,14 +116,15 @@ public class LiurqThreadPoolExecutor implements LiurqExecutorService {
         }
 
         int c = ctl.get();
-        //任务数小于
         if (c < poolsize) {
+            //加入核心线程数
             if (addWorker(task, true)) {
                 return;
             }
         } else if (workQueue.offer(task)) {
-
+            //加入等待队列
         } else {
+            //执行拒绝策略
             handler.rejected(task, this);//任务拒绝策略
         }
     }
